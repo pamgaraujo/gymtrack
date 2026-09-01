@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Registro de Treino — Full Body A/B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --agua:#0B1A22;
+    --fundo:#0F2430;
+    --piso:#163544;
+    --borda:#22505F;
+    --giz:#E9F2F0;
+    --giz-fraco:#8FAAB2;
+    --raia:#3FB8A8;
+    --raia-b:#E9B949;
+    --alerta:#E2725B;
+    --r:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--agua);
+    color:var(--giz);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    font-size:15px;line-height:1.5;
+    padding:0 0 96px;
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:0 16px}
+
+  /* cabeçalho — a raia */
+  header{
+    position:relative;overflow:hidden;
+    background:var(--fundo);
+    border-bottom:1px solid var(--borda);
+    padding:22px 0 20px;
+  }
+  header::after{
+    content:"";position:absolute;inset:auto 0 0 0;height:3px;
+    background:repeating-linear-gradient(90deg,var(--raia) 0 22px,transparent 22px 40px);
+    opacity:.55;
+  }
+  .eyebrow{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--giz-fraco);margin:0 0 6px;
+  }
+  .proximo{display:flex;align-items:baseline;gap:12px}
+  .letra{
+    font-family:"Barlow Condensed",sans-serif;font-weight:700;
+    font-size:76px;line-height:.8;letter-spacing:-.02em;color:var(--raia);
+    animation:sobe .5s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .letra.b{color:var(--raia-b)}
+  @keyframes sobe{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .proximo h1{
+    font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;
+    letter-spacing:.04em;font-size:22px;margin:0;
+  }
+  .sub{font-size:13px;color:var(--giz-fraco);margin:4px 0 0}
+
+  /* abas */
+  nav{display:flex;gap:4px;margin:16px 0 18px}
+  nav button{
+    flex:1;background:transparent;border:1px solid var(--borda);color:var(--giz-fraco);
+    font-family:"Barlow Condensed",sans-serif;font-weight:600;text-transform:uppercase;
+    letter-spacing:.05em;font-size:13px;padding:9px 2px;border-radius:9px;cursor:pointer;
+  }
+  pre{
+    background:var(--fundo);border:1px solid var(--borda);border-radius:var(--r);
+    padding:13px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.55;
+    color:var(--giz);overflow-x:auto;white-space:pre;margin:0;
+  }
+  nav button[aria-selected="true"]{background:var(--piso);color:var(--giz);border-color:var(--raia)}
+  nav button:focus-visible,.chip:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
+    outline:2px solid var(--raia);outline-offset:2px}
+
+  .troca{display:flex;gap:8px;margin-bottom:14px}
+  .troca button{
+    flex:1;padding:10px;border-radius:10px;border:1px solid var(--borda);
+    background:transparent;color:var(--giz-fraco);cursor:pointer;
+    font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:600;letter-spacing:.06em;
+  }
+  .troca button.on{background:var(--raia);color:var(--agua);border-color:var(--raia)}
+  .troca button.on.b{background:var(--raia-b)}
+
+  /* exercícios */
+  .ex{background:var(--fundo);border:1px solid var(--borda);border-radius:var(--r);padding:14px;margin-bottom:10px}
+  .ex h3{
+    font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:19px;
+    text-transform:uppercase;letter-spacing:.03em;margin:0 0 2px;
+  }
+  .regiao{font-size:13px;color:var(--giz);margin:0 0 4px;opacity:.9}
+  .meta{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--giz-fraco);margin:0 0 10px}
+  .ultima{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--raia);
+    background:rgba(63,184,168,.08);border-left:2px solid var(--raia);
+    padding:5px 8px;border-radius:0 6px 6px 0;margin:0 0 10px;
+  }
+  .serie{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+  .serie span{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--giz-fraco);width:22px}
+  input[type="number"],input[type="text"],textarea{
+    background:var(--piso);border:1px solid var(--borda);color:var(--giz);
+    border-radius:8px;padding:9px 10px;font-family:"IBM Plex Mono",monospace;font-size:15px;
+    width:100%;min-width:0;
+  }
+  input::placeholder,textarea::placeholder{color:#5C7C87}
+  textarea{font-family:"IBM Plex Sans",sans-serif;font-size:14px;resize:vertical;min-height:52px}
+  .rpe{margin-top:10px}
+  .rpe p{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--giz-fraco);margin:0 0 6px}
+  .chips{display:flex;gap:5px;flex-wrap:wrap}
+  .chip{
+    width:34px;height:34px;border-radius:8px;border:1px solid var(--borda);
+    background:transparent;color:var(--giz-fraco);cursor:pointer;
+    font-family:"IBM Plex Mono",monospace;font-size:13px;
+  }
+  .chip.on{background:var(--giz);color:var(--agua);border-color:var(--giz)}
+  .chip.on.alto{background:var(--alerta);border-color:var(--alerta);color:#fff}
+
+  .primaria{
+    width:100%;padding:15px;border:none;border-radius:12px;background:var(--raia);color:var(--agua);
+    font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:19px;
+    text-transform:uppercase;letter-spacing:.08em;cursor:pointer;margin-top:6px;
+  }
+  .primaria:disabled{opacity:.45;cursor:not-allowed}
+  .fantasma{
+    background:transparent;border:1px solid var(--borda);color:var(--giz-fraco);
+    border-radius:9px;padding:8px 12px;font-size:13px;cursor:pointer;font-family:inherit;
+  }
+
+  .card{background:var(--fundo);border:1px solid var(--borda);border-radius:var(--r);padding:13px;margin-bottom:9px}
+  .card h4{font-family:"Barlow Condensed",sans-serif;font-size:17px;text-transform:uppercase;
+    letter-spacing:.04em;margin:0 0 2px;font-weight:600}
+  .card .quando{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--giz-fraco)}
+  .linhas{margin-top:9px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--giz-fraco)}
+  .linhas div{padding:3px 0;border-top:1px solid rgba(34,80,95,.5)}
+  .linhas b{color:var(--giz);font-weight:600}
+  .tagA,.tagB{font-family:"IBM Plex Mono",monospace;font-size:11px;padding:2px 7px;border-radius:5px}
+  .tagA{background:rgba(63,184,168,.15);color:var(--raia)}
+  .tagB{background:rgba(233,185,73,.15);color:var(--raia-b)}
+
+  .barra{height:7px;border-radius:4px;background:var(--piso);overflow:hidden;margin-top:3px}
+  .barra i{display:block;height:100%;background:var(--raia)}
+
+  .vazio{text-align:center;color:var(--giz-fraco);padding:34px 16px;border:1px dashed var(--borda);border-radius:var(--r)}
+  .vazio strong{display:block;color:var(--giz);font-family:"Barlow Condensed",sans-serif;
+    font-size:20px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+  .aviso{background:rgba(226,114,91,.1);border:1px solid var(--alerta);color:#F3B3A3;
+    padding:10px 12px;border-radius:10px;font-size:13.5px;margin-bottom:12px}
+  .rodape{margin-top:22px;display:flex;justify-content:center}
+  .toast{
+    position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+    background:var(--raia);color:var(--agua);padding:12px 20px;border-radius:10px;
+    font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:17px;
+    letter-spacing:.05em;text-transform:uppercase;z-index:9;
+    opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;
+  }
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(-6px)}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <p class="eyebrow" id="eyebrow">Carregando…</p>
+    <div class="proximo">
+      <div class="letra" id="letra">–</div>
+      <div>
+        <h1 id="tituloTreino">Full Body</h1>
+        <p class="sub" id="subtitulo"></p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav role="tablist">
+    <button role="tab" id="tab-treino" aria-selected="true" onclick="verAba('treino')">Treino</button>
+    <button role="tab" id="tab-historico" aria-selected="false" onclick="verAba('historico')">Histórico</button>
+    <button role="tab" id="tab-progresso" aria-selected="false" onclick="verAba('progresso')">Progresso</button>
+    <button role="tab" id="tab-relatorio" aria-selected="false" onclick="verAba('relatorio')">Relatório</button>
+  </nav>
+
+  <section id="aba-treino">
+    <div class="troca">
+      <button id="btnA" onclick="escolher('A')">Treino A</button>
+      <button id="btnB" onclick="escolher('B')">Treino B</button>
+    </div>
+    <div id="listaEx"></div>
+    <textarea id="obsGeral" placeholder="Como foi a sessão? Sono, energia, dores, natação no dia anterior…"></textarea>
+    <button class="primaria" id="salvar" onclick="salvarSessao()">Salvar sessão</button>
+  </section>
+
+  <section id="aba-historico" hidden></section>
+  <section id="aba-progresso" hidden></section>
+  <section id="aba-relatorio" hidden></section>
+
+  <div class="rodape" style="gap:8px;flex-wrap:wrap">
+<button class="fantasma" onclick="exportarBackup()">Exportar backup</button>
+<button class="fantasma" onclick="document.getElementById('importFile').click()">Importar backup</button>
+<button class="fantasma" onclick="apagarTudo()">Apagar todo o registro</button>
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="importarBackup(event)">
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CHAVE = "registro-treino-ab-v1";
+
+const TREINOS = {
+  A: [
+    {id:"goblet",      nome:"Agachamento goblet",        regiao:"Frente das coxas + bumbum",              series:3, reps:"8–10",       descanso:"90s"},
+    {id:"serrote",     nome:"Remada serrote",            regiao:"Costas (lateral, abaixo das axilas)",    series:3, reps:"10–12/lado", descanso:"90s"},
+    {id:"supino",      nome:"Supino reto com halteres",  regiao:"Peito",                                  series:2, reps:"8–12",       descanso:"90s"},
+    {id:"pelvica",     nome:"Elevação pélvica",          regiao:"Bumbum",                                 series:3, reps:"10–12",      descanso:"90s"},
+    {id:"lateral",     nome:"Elevação lateral",          regiao:"Lateral dos ombros",                     series:3, reps:"12–15",      descanso:"60s"},
+    {id:"rosca",       nome:"Rosca direta",              regiao:"Frente do braço (bíceps)",               series:3, reps:"10–12",      descanso:"superssérie"},
+    {id:"testa",       nome:"Tríceps testa com halteres",regiao:"Atrás do braço (tchauzinho)",            series:3, reps:"10–12",      descanso:"60s"},
+    {id:"prancha",     nome:"Prancha frontal",           regiao:"Barriga e cintura",                      series:2, reps:"20–40s",     descanso:"45s"}
+  ],
+  B: [
+    {id:"rdl",         nome:"Terra romeno com halteres", regiao:"Atrás das coxas + bumbum",               series:3, reps:"8–10",      descanso:"90s"},
+    {id:"puxada",      nome:"Puxada frontal na polia",   regiao:"Costas (lateral, abaixo das axilas)",    series:3, reps:"10–12",     descanso:"90s"},
+    {id:"desenv",      nome:"Desenvolvimento sentado",   regiao:"Frente e lateral dos ombros",            series:3, reps:"8–10",      descanso:"90s"},
+    {id:"afundo",      nome:"Afundo estático",           regiao:"Frente das coxas + bumbum",              series:2, reps:"8–10/perna",descanso:"90s"},
+    {id:"facepull",    nome:"Face pull",                 regiao:"Parte de trás dos ombros + meio das costas", series:3, reps:"12–15", descanso:"60s"},
+    {id:"martelo",     nome:"Rosca martelo",             regiao:"Frente do braço + antebraço",            series:3, reps:"10–12",     descanso:"superssérie"},
+    {id:"triceps",     nome:"Tríceps na polia",          regiao:"Atrás do braço (tchauzinho)",            series:3, reps:"10–12",     descanso:"60s"},
+    {id:"panturrilha", nome:"Panturrilha em pé",         regiao:"Batata da perna",                        series:2, reps:"12–15",     descanso:"superssérie"},
+    {id:"deadbug",     nome:"Dead bug",                  regiao:"Barriga (parte profunda)",               series:2, reps:"8–10/lado", descanso:"45s"}
+  ]
+};
+
+let sessoes = [];
+let atual = "A";
+let rascunho = {};
+
+/* ---------- armazenamento ---------- */
+async function carregar(){
+  try{
+    const r = localStorage.getItem(CHAVE);
+    sessoes = r ? JSON.parse(r) : [];
+  }catch(e){ sessoes = []; }
+  atual = proximoTreino();
+  desenharTudo();
+}
+async function gravar(){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify(sessoes));
+    return true;
+  }catch(e){ return false; }
+}
+
+/* ---------- lógica ---------- */
+function proximoTreino(){
+  if(!sessoes.length) return "A";
+  return sessoes[sessoes.length-1].treino === "A" ? "B" : "A";
+}
+function ultimaDe(exId){
+  for(let i=sessoes.length-1;i>=0;i--){
+    const e = sessoes[i].exercicios.find(x=>x.id===exId && x.series.some(s=>s.kg!==""));
+    if(e) return {data:sessoes[i].data, ex:e};
+  }
+  return null;
+}
+function dataBR(iso){
+  const [a,m,d] = iso.split("-");
+  return `${d}/${m}/${a}`;
+}
+function diasDesde(iso){
+  const ms = new Date().setHours(0,0,0,0) - new Date(iso+"T00:00:00").getTime();
+  return Math.round(ms/86400000);
+}
+
+/* ---------- cabeçalho ---------- */
+function desenharCabecalho(){
+  const prox = proximoTreino();
+  document.getElementById("letra").textContent = prox;
+  document.getElementById("letra").className = "letra" + (prox==="B"?" b":"");
+  document.getElementById("tituloTreino").textContent = "Full Body " + prox;
+  const eb = document.getElementById("eyebrow");
+  const sb = document.getElementById("subtitulo");
+  if(!sessoes.length){
+    eb.textContent = "Primeira sessão";
+    sb.textContent = "Nada registrado ainda. Comece pelo Treino A.";
+  }else{
+    const u = sessoes[sessoes.length-1];
+    const d = diasDesde(u.data);
+    eb.textContent = "Próximo treino";
+    sb.textContent = `Último: ${u.treino} em ${dataBR(u.data)} · ${d===0?"hoje":d===1?"ontem":"há "+d+" dias"} · ${sessoes.length} sessões`;
+  }
+}
+
+/* ---------- aba treino ---------- */
+function escolher(t){ atual = t; rascunho = {}; desenharTreino(); }
+
+function desenharTreino(){
+  document.getElementById("btnA").className = atual==="A" ? "on" : "";
+  document.getElementById("btnB").className = atual==="B" ? "on b" : "";
+  const alvo = document.getElementById("listaEx");
+  alvo.innerHTML = "";
+
+  if(atual !== proximoTreino()){
+    const a = document.createElement("div");
+    a.className = "aviso";
+    a.textContent = `Pela alternância, o próximo seria o Treino ${proximoTreino()}. Registrar o ${atual} está ok — só evite repetir o mesmo dois dias seguidos.`;
+    alvo.appendChild(a);
+  }
+
+  TREINOS[atual].forEach(ex=>{
+    if(!rascunho[ex.id]) rascunho[ex.id] = {series:Array.from({length:ex.series},()=>({kg:"",reps:""})), rpe:null};
+    const d = rascunho[ex.id];
+    const ant = ultimaDe(ex.id);
+
+    const c = document.createElement("div");
+    c.className = "ex";
+    let html = `<h3>${ex.nome}</h3><p class="regiao">${ex.regiao}</p><p class="meta">${ex.series} séries · ${ex.reps} · ${ex.descanso==="superssérie"?"emenda no próximo, sem descanso":"descanso "+ex.descanso}</p>`;
+    if(ant){
+      const res = ant.ex.series.filter(s=>s.kg!=="").map(s=>`${s.kg}kg×${s.reps||"–"}`).join("  ");
+      html += `<p class="ultima">${dataBR(ant.data)} → ${res}${ant.ex.rpe?`  ·  RPE ${ant.ex.rpe}`:""}</p>`;
+    }
+    d.series.forEach((s,i)=>{
+      html += `<div class="serie"><span>${i+1}ª</span>
+        <input type="number" inputmode="decimal" step="0.5" placeholder="kg" value="${s.kg}" oninput="campo('${ex.id}',${i},'kg',this.value)">
+        <input type="number" inputmode="numeric" placeholder="reps" value="${s.reps}" oninput="campo('${ex.id}',${i},'reps',this.value)">
+      </div>`;
+    });
+    html += `<div class="rpe"><p>Percepção de esforço</p><div class="chips">`;
+    for(let n=1;n<=10;n++){
+      const on = d.rpe===n ? " on"+(n>=9?" alto":"") : "";
+      html += `<button class="chip${on}" onclick="setRpe('${ex.id}',${n})" aria-label="RPE ${n}">${n}</button>`;
+    }
+    html += `</div></div>`;
+    c.innerHTML = html;
+    alvo.appendChild(c);
+  });
+}
+function campo(id,i,k,v){ rascunho[id].series[i][k] = v; }
+function setRpe(id,n){ rascunho[id].rpe = rascunho[id].rpe===n ? null : n; desenharTreino(); }
+
+async function salvarSessao(){
+  const exercicios = TREINOS[atual].map(ex=>({
+    id:ex.id, nome:ex.nome,
+    series: rascunho[ex.id].series.map(s=>({kg:s.kg, reps:s.reps})),
+    rpe: rascunho[ex.id].rpe
+  }));
+  if(!exercicios.some(e=>e.series.some(s=>s.kg!=="" || s.reps!==""))){
+    aviso("Preencha ao menos uma série"); return;
+  }
+  const btn = document.getElementById("salvar");
+  btn.disabled = true; btn.textContent = "Salvando…";
+  sessoes.push({
+    data:new Date().toISOString().slice(0,10),
+    treino:atual, exercicios,
+    obs:document.getElementById("obsGeral").value.trim()
+  });
+  const ok = await gravar();
+  btn.disabled = false; btn.textContent = "Salvar sessão";
+  if(!ok){ sessoes.pop(); aviso("Não deu para salvar. Tente de novo."); return; }
+  document.getElementById("obsGeral").value = "";
+  rascunho = {};
+  atual = proximoTreino();
+  desenharTudo();
+  aviso("Sessão registrada");
+}
+
+/* ---------- histórico ---------- */
+function desenharHistorico(){
+  const alvo = document.getElementById("aba-historico");
+  if(!sessoes.length){
+    alvo.innerHTML = `<div class="vazio"><strong>Sem sessões</strong>Registre o primeiro treino na aba Treino.</div>`;
+    return;
+  }
+  alvo.innerHTML = sessoes.slice().reverse().map((s,idxRev)=>{
+    const idx = sessoes.length-1-idxRev;
+    const linhas = s.exercicios.filter(e=>e.series.some(x=>x.kg!==""||x.reps!==""))
+      .map(e=>{
+        const set = e.series.filter(x=>x.kg!==""||x.reps!=="").map(x=>`${x.kg||"–"}×${x.reps||"–"}`).join("  ");
+        return `<div><b>${e.nome}</b> · ${set}${e.rpe?` · RPE ${e.rpe}`:""}</div>`;
+      }).join("");
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div><h4>${dataBR(s.data)}</h4><span class="quando">${s.exercicios.filter(e=>e.rpe).length? "RPE médio "+media(s):"sem RPE"}</span></div>
+        <span class="tag${s.treino}">TREINO ${s.treino}</span>
+      </div>
+      <div class="linhas">${linhas}</div>
+      ${s.obs?`<p style="font-size:13.5px;color:var(--giz-fraco);margin:9px 0 0">${escapar(s.obs)}</p>`:""}
+      <div style="margin-top:10px"><button class="fantasma" onclick="apagar(${idx})">Apagar</button></div>
+    </div>`;
+  }).join("");
+}
+function media(s){
+  const r = s.exercicios.filter(e=>e.rpe).map(e=>e.rpe);
+  return (r.reduce((a,b)=>a+b,0)/r.length).toFixed(1);
+}
+function escapar(t){ const d=document.createElement("div"); d.textContent=t; return d.innerHTML; }
+async function apagar(i){
+  const g = sessoes.splice(i,1);
+  const ok = await gravar();
+  if(!ok){ sessoes.splice(i,0,g[0]); aviso("Não deu para apagar"); return; }
+  desenharTudo(); aviso("Sessão apagada");
+}
+async function apagarTudo(){
+  if(!confirm("Apagar todas as sessões registradas? Isso não tem volta.")) return;
+  const bkp = sessoes; sessoes = [];
+  const ok = await gravar();
+  if(!ok){ sessoes = bkp; aviso("Não deu para apagar"); return; }
+  desenharTudo(); aviso("Registro zerado");
+}
+
+/* ---------- progresso ---------- */
+function desenharProgresso(){
+  const alvo = document.getElementById("aba-progresso");
+  if(!sessoes.length){
+    alvo.innerHTML = `<div class="vazio"><strong>Sem dados</strong>O progresso aparece depois de duas sessões do mesmo treino.</div>`;
+    return;
+  }
+  const todos = [...TREINOS.A.map(e=>({...e,t:"A"})), ...TREINOS.B.map(e=>({...e,t:"B"}))];
+  let html = "";
+  todos.forEach(ex=>{
+    const pontos = [];
+    sessoes.forEach(s=>{
+      const e = s.exercicios.find(x=>x.id===ex.id);
+      if(!e) return;
+      const pesos = e.series.map(x=>parseFloat(x.kg)).filter(n=>!isNaN(n));
+      if(pesos.length) pontos.push({data:s.data, kg:Math.max(...pesos), rpe:e.rpe});
+    });
+    if(!pontos.length) return;
+    const max = Math.max(...pontos.map(p=>p.kg)) || 1;
+    const ult = pontos[pontos.length-1], pri = pontos[0];
+    const delta = ult.kg - pri.kg;
+    html += `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+        <h4>${ex.nome}</h4>
+        <span class="tag${ex.t}">${ult.kg} kg${delta>0?` ↑${delta.toFixed(1)}`:""}</span>
+      </div>
+      <div class="linhas">${pontos.slice(-6).map(p=>`
+        <div style="display:flex;align-items:center;gap:9px">
+          <span style="width:52px">${dataBR(p.data).slice(0,5)}</span>
+          <span style="flex:1"><span class="barra"><i style="width:${Math.round(p.kg/max*100)}%;${ex.t==="B"?"background:var(--raia-b)":""}"></i></span></span>
+          <b style="width:60px;text-align:right">${p.kg}kg${p.rpe?` · ${p.rpe}`:""}</b>
+        </div>`).join("")}</div>
+    </div>`;
+  });
+  alvo.innerHTML = html || `<div class="vazio"><strong>Sem cargas</strong>Preencha o campo kg para acompanhar a progressão.</div>`;
+}
+
+/* ---------- relatório ---------- */
+function todosExercicios(){
+  return [...TREINOS.A.map(e=>({...e,t:"A"})), ...TREINOS.B.map(e=>({...e,t:"B"}))];
+}
+function gerarTexto(){
+  if(!sessoes.length) return "Nenhuma sessão registrada.";
+  const pri = sessoes[0].data, ult = sessoes[sessoes.length-1].data;
+  const dias = Math.max(1, Math.round((new Date(ult)-new Date(pri))/86400000)+1);
+  const semanas = (dias/7);
+  const nA = sessoes.filter(s=>s.treino==="A").length;
+  const nB = sessoes.length - nA;
+  const rpes = sessoes.flatMap(s=>s.exercicios.filter(e=>e.rpe).map(e=>e.rpe));
+  const rpeGeral = rpes.length ? (rpes.reduce((a,b)=>a+b,0)/rpes.length).toFixed(1) : "—";
+
+  let t = "RELATÓRIO DE TREINO — FULL BODY A/B\n";
+  t += "=".repeat(42) + "\n";
+  t += `Período: ${dataBR(pri)} a ${dataBR(ult)} (${semanas.toFixed(1)} semanas)\n`;
+  t += `Sessões: ${sessoes.length} (${nA} Treino A / ${nB} Treino B)\n`;
+  t += `Frequência média: ${(sessoes.length/semanas).toFixed(1)} sessões por semana\n`;
+  t += `RPE médio geral: ${rpeGeral}\n\n`;
+
+  t += "EVOLUÇÃO DE CARGA\n" + "-".repeat(42) + "\n";
+  todosExercicios().forEach(ex=>{
+    const pts = [];
+    sessoes.forEach(s=>{
+      const e = s.exercicios.find(x=>x.id===ex.id);
+      if(!e) return;
+      const pesos = e.series.map(x=>parseFloat(x.kg)).filter(n=>!isNaN(n));
+      const reps  = e.series.map(x=>parseInt(x.reps)).filter(n=>!isNaN(n));
+      if(pesos.length) pts.push({kg:Math.max(...pesos), reps:reps.length?Math.max(...reps):null, rpe:e.rpe, data:s.data});
+    });
+    if(!pts.length){ t += `${ex.nome} (${ex.t}): sem registro de carga\n`; return; }
+    const a = pts[0], z = pts[pts.length-1];
+    const d = z.kg - a.kg;
+    const r = pts.filter(p=>p.rpe).map(p=>p.rpe);
+    const rm = r.length ? (r.reduce((x,y)=>x+y,0)/r.length).toFixed(1) : "—";
+    t += `${ex.nome} (${ex.t})\n`;
+    t += `   início ${a.kg}kg${a.reps?`x${a.reps}`:""} (${dataBR(a.data)}) → atual ${z.kg}kg${z.reps?`x${z.reps}`:""} (${dataBR(z.data)})`;
+    t += `   |  ${d>0?"+"+d.toFixed(1):d.toFixed(1)}kg  |  ${pts.length} registros  |  RPE médio ${rm}\n`;
+  });
+
+  const comObs = sessoes.filter(s=>s.obs);
+  if(comObs.length){
+    t += "\nOBSERVAÇÕES\n" + "-".repeat(42) + "\n";
+    comObs.slice(-15).forEach(s=>{ t += `${dataBR(s.data)} (${s.treino}): ${s.obs}\n`; });
+  }
+
+  t += "\nÚLTIMAS 6 SESSÕES — DETALHE\n" + "-".repeat(42) + "\n";
+  sessoes.slice(-6).forEach(s=>{
+    t += `${dataBR(s.data)} · TREINO ${s.treino}\n`;
+    s.exercicios.forEach(e=>{
+      const set = e.series.filter(x=>x.kg!==""||x.reps!=="").map(x=>`${x.kg||"–"}x${x.reps||"–"}`).join(" ");
+      if(set) t += `   ${e.nome}: ${set}${e.rpe?` (RPE ${e.rpe})`:""}\n`;
+    });
+  });
+  return t;
+}
+function desenharRelatorio(){
+  const alvo = document.getElementById("aba-relatorio");
+  if(!sessoes.length){
+    alvo.innerHTML = `<div class="vazio"><strong>Sem relatório</strong>Registre algumas sessões e o relatório aparece aqui pronto para copiar.</div>`;
+    return;
+  }
+  alvo.innerHTML = `
+    <p style="font-size:13.5px;color:var(--giz-fraco);margin:0 0 12px">
+      Copie este texto e cole numa conversa para revisarmos a progressão e ajustar o programa.</p>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="primaria" style="margin:0" onclick="copiarRelatorio()">Copiar relatório</button>
+      <button class="fantasma" onclick="baixarRelatorio()">Baixar .txt</button>
+    </div>
+    <pre id="txtRelatorio">${escapar(gerarTexto())}</pre>`;
+}
+async function copiarRelatorio(){
+  const t = gerarTexto();
+  try{
+    await navigator.clipboard.writeText(t);
+    aviso("Relatório copiado");
+  }catch(e){
+    const el = document.getElementById("txtRelatorio");
+    const sel = window.getSelection(); sel.removeAllRanges();
+    const r = document.createRange(); r.selectNodeContents(el); sel.addRange(r);
+    aviso("Selecionado — use copiar do teclado");
+  }
+}
+function baixarRelatorio(){
+  try{
+    const b = new Blob([gerarTexto()], {type:"text/plain;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(b);
+    a.download = `treino-${new Date().toISOString().slice(0,10)}.txt`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+  }catch(e){ aviso("Download indisponível — use copiar"); }
+}
+
+/* ---------- geral ---------- */
+function verAba(nome){
+  ["treino","historico","progresso","relatorio"].forEach(n=>{
+    document.getElementById("aba-"+n).hidden = n!==nome;
+    document.getElementById("tab-"+n).setAttribute("aria-selected", n===nome);
+  });
+}
+function desenharTudo(){ desenharCabecalho(); desenharTreino(); desenharHistorico(); desenharProgresso(); desenharRelatorio(); }
+let tid;
+function aviso(t){
+  const el = document.getElementById("toast");
+  el.textContent = t; el.classList.add("on");
+  clearTimeout(tid); tid = setTimeout(()=>el.classList.remove("on"), 2200);
+}
+
+async function exportarBackup(){
+  try{
+    const b = new Blob([JSON.stringify(sessoes,null,2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(b);
+    a.download = "backup-treino.json";
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+    aviso("Backup exportado");
+  }catch(e){ aviso("Erro ao exportar"); }
+}
+
+async function importarBackup(event){
+  const arq = event.target.files[0];
+  if(!arq) return;
+  try{
+    const txt = await arq.text();
+    const dados = JSON.parse(txt);
+    if(!Array.isArray(dados)) throw new Error();
+    sessoes = dados;
+    await gravar();
+    desenharTudo();
+    aviso("Backup importado");
+  }catch(e){
+    aviso("Arquivo inválido");
+  }
+  event.target.value = "";
+}
+
+carregar();
+</script>
+</body>
+</html>
