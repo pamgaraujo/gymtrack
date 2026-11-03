@@ -86,8 +86,46 @@
   .troca button.on{background:var(--raia);color:var(--agua);border-color:var(--raia)}
   .troca button.on.b{background:var(--raia-b)}
 
+  /* regras do programa */
+  details.regras{
+    background:var(--fundo);border:1px solid var(--borda);border-radius:var(--r);
+    padding:12px 14px;margin-bottom:14px;font-size:13.5px;
+  }
+  details.regras summary{
+    cursor:pointer;font-family:"Barlow Condensed",sans-serif;font-weight:600;
+    text-transform:uppercase;letter-spacing:.04em;font-size:14px;color:var(--giz);
+  }
+  details.regras ul{margin:10px 0 0;padding-left:18px;color:var(--giz-fraco)}
+  details.regras li{margin-bottom:6px}
+  details.regras b{color:var(--giz)}
+
+  /* blocos (circuitos) */
+  .bloco{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--giz-fraco);margin:18px 0 8px;
+    display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1px solid var(--borda);padding-bottom:4px;
+  }
+  #listaEx>.bloco:first-child{margin-top:0}
+  .bloco span:last-child{color:var(--raia)}
+
+  /* natação */
+  .nata{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .nata button{
+    flex:1;min-width:104px;padding:9px 6px;border-radius:9px;border:1px solid var(--borda);
+    background:transparent;color:var(--giz-fraco);cursor:pointer;
+    font-family:"IBM Plex Mono",monospace;font-size:11.5px;
+  }
+  .nata button.on{background:var(--raia);color:var(--agua);border-color:var(--raia)}
+  .dica{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--giz-fraco);
+    background:rgba(143,170,178,.08);border-left:2px solid var(--borda);
+    padding:6px 9px;border-radius:0 6px 6px 0;margin:0 0 14px;
+  }
+
   /* exercícios */
   .ex{background:var(--fundo);border:1px solid var(--borda);border-radius:var(--r);padding:14px;margin-bottom:10px}
+  .ex.final{border-color:var(--raia-b)}
   .ex h3{
     font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:19px;
     text-transform:uppercase;letter-spacing:.03em;margin:0 0 2px;
@@ -138,9 +176,10 @@
   .linhas{margin-top:9px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--giz-fraco)}
   .linhas div{padding:3px 0;border-top:1px solid rgba(34,80,95,.5)}
   .linhas b{color:var(--giz);font-weight:600}
-  .tagA,.tagB{font-family:"IBM Plex Mono",monospace;font-size:11px;padding:2px 7px;border-radius:5px}
+  .tagA,.tagB,.tagNat{font-family:"IBM Plex Mono",monospace;font-size:11px;padding:2px 7px;border-radius:5px}
   .tagA{background:rgba(63,184,168,.15);color:var(--raia)}
   .tagB{background:rgba(233,185,73,.15);color:var(--raia-b)}
+  .tagNat{background:rgba(143,170,178,.15);color:var(--giz-fraco)}
 
   .barra{height:7px;border-radius:4px;background:var(--piso);overflow:hidden;margin-top:3px}
   .barra i{display:block;height:100%;background:var(--raia)}
@@ -189,8 +228,23 @@
       <button id="btnA" onclick="escolher('A')">Treino A</button>
       <button id="btnB" onclick="escolher('B')">Treino B</button>
     </div>
+
+    <details class="regras">
+      <summary>Regras do programa e progressão</summary>
+      <ul>
+        <li><b>Dupla/trio:</b> faça os exercícios do bloco em sequência e descanse de 60 a 90s no fim da volta.</li>
+        <li><b>Alternância contínua:</b> o próximo treino é sempre a letra seguinte, não importa o dia.</li>
+        <li><b>Aquecimento:</b> 5 min de cardio leve, mais 1 volta leve do bloco 1.</li>
+        <li><b>Intensidade:</b> termine cada série sentindo que ainda daria para 1–3 reps extras com boa técnica.</li>
+        <li><b>Carga:</b> quando completar todas as voltas no topo das repetições, aumente um pouco o peso.</li>
+        <li><b>Abdômen:</b> aumente primeiro as repetições ou o tempo, depois a carga ou a dificuldade.</li>
+        <li><b>Semana leve:</b> a cada 6–8 semanas, faça metade das voltas.</li>
+        <li><b>Véspera de aula:</b> se puder escolher, prefira o Treino A — o B cansa mais costas e ombros.</li>
+      </ul>
+    </details>
+
     <div id="listaEx"></div>
-    <textarea id="obsGeral" placeholder="Como foi a sessão? Sono, energia, dores, natação no dia anterior…"></textarea>
+    <textarea id="obsGeral" placeholder="Como foi a sessão? Sono, energia, dores…"></textarea>
     <button class="primaria" id="salvar" onclick="salvarSessao()">Salvar sessão</button>
   </section>
 
@@ -212,32 +266,57 @@
 const CHAVE = "registro-treino-ab-v1";
 
 const TREINOS = {
-  A: [
-    {id:"goblet",      nome:"Agachamento goblet",        regiao:"Frente das coxas + bumbum",              series:3, reps:"8–10",       descanso:"90s"},
-    {id:"serrote",     nome:"Remada serrote",            regiao:"Costas (lateral, abaixo das axilas)",    series:3, reps:"10–12/lado", descanso:"90s"},
-    {id:"supino",      nome:"Supino reto com halteres",  regiao:"Peito",                                  series:2, reps:"8–12",       descanso:"90s"},
-    {id:"pelvica",     nome:"Elevação pélvica",          regiao:"Bumbum",                                 series:3, reps:"10–12",      descanso:"90s"},
-    {id:"lateral",     nome:"Elevação lateral",          regiao:"Lateral dos ombros",                     series:3, reps:"12–15",      descanso:"60s"},
-    {id:"rosca",       nome:"Rosca direta",              regiao:"Frente do braço (bíceps)",               series:3, reps:"10–12",      descanso:"superssérie"},
-    {id:"testa",       nome:"Tríceps testa com halteres",regiao:"Atrás do braço (tchauzinho)",            series:3, reps:"10–12",      descanso:"60s"},
-    {id:"prancha",     nome:"Prancha frontal",           regiao:"Barriga e cintura",                      series:2, reps:"20–40s",     descanso:"45s"}
-  ],
-  B: [
-    {id:"rdl",         nome:"Terra romeno com halteres", regiao:"Atrás das coxas + bumbum",               series:3, reps:"8–10",      descanso:"90s"},
-    {id:"puxada",      nome:"Puxada frontal na polia",   regiao:"Costas (lateral, abaixo das axilas)",    series:3, reps:"10–12",     descanso:"90s"},
-    {id:"desenv",      nome:"Desenvolvimento sentado",   regiao:"Frente e lateral dos ombros",            series:3, reps:"8–10",      descanso:"90s"},
-    {id:"afundo",      nome:"Afundo estático",           regiao:"Frente das coxas + bumbum",              series:2, reps:"8–10/perna",descanso:"90s"},
-    {id:"facepull",    nome:"Face pull",                 regiao:"Parte de trás dos ombros + meio das costas", series:3, reps:"12–15", descanso:"60s"},
-    {id:"martelo",     nome:"Rosca martelo",             regiao:"Frente do braço + antebraço",            series:3, reps:"10–12",     descanso:"superssérie"},
-    {id:"triceps",     nome:"Tríceps na polia",          regiao:"Atrás do braço (tchauzinho)",            series:3, reps:"10–12",     descanso:"60s"},
-    {id:"panturrilha", nome:"Panturrilha em pé",         regiao:"Batata da perna",                        series:2, reps:"12–15",     descanso:"superssérie"},
-    {id:"deadbug",     nome:"Dead bug",                  regiao:"Barriga (parte profunda)",               series:2, reps:"8–10/lado", descanso:"45s"}
-  ]
+  A: {
+    blocos: [
+      {nome:"Bloco 1", voltas:"3–4 voltas", exercicios:[
+        {id:"agachSumo",      nome:"Agachamento sumô com halter",  regiao:"Pernas abertas — coxas e bumbum",                reps:"10–12"},
+        {id:"arnold",         nome:"Desenvolvimento Arnold",       regiao:"Ombros — halteres sobem girando as palmas",      reps:"10–12"}
+      ]},
+      {nome:"Bloco 2", voltas:"3 voltas", exercicios:[
+        {id:"serrote",        nome:"Remada serrote",               regiao:"Costas — um joelho no banco, puxa com um braço", reps:"10–12 cada lado"},
+        {id:"passada",        nome:"Passada andando com halteres", regiao:"Pernas",                                         reps:"10 passos cada perna"}
+      ]},
+      {nome:"Bloco 3", voltas:"3 voltas", exercicios:[
+        {id:"lateral",        nome:"Elevação lateral",             regiao:"Lateral dos ombros",                             reps:"12–15"},
+        {id:"francesTriceps", nome:"Tríceps francês",              regiao:"Atrás do braço — halter atrás da cabeça",        reps:"10–12"},
+        {id:"panturrilha",    nome:"Panturrilha em pé",            regiao:"Batata da perna",                                reps:"12–15"}
+      ]}
+    ],
+    abdomen: {nome:"Abdômen A", voltas:"3 voltas, pouco descanso", exercicios:[
+      {id:"abdPoliaA",     nome:"Abdominal na polia ajoelhado", regiao:"Barriga",                                      reps:"12–15"},
+      {id:"elevPernas",   nome:"Elevação de pernas",           regiao:"Barriga (parte baixa) — na barra ou paralela", reps:"8–12"},
+      {id:"pranchaLateral", nome:"Prancha lateral",            regiao:"Lateral da cintura",                           reps:"30s cada lado"}
+    ]},
+    final: {id:"finalA", nome:"Final A", padrao:"6 min", descricao:"A cada minuto: 20s de kettlebell swing e 8 flexões (pode apoiar os joelhos). Descanse o resto do minuto."}
+  },
+  B: {
+    blocos: [
+      {nome:"Bloco 1", voltas:"3–4 voltas", exercicios:[
+        {id:"subidaBanco",  nome:"Subida no banco com halteres",       regiao:"Pernas", reps:"10 cada perna"},
+        {id:"puxada",       nome:"Puxada frontal com pegada fechada",  regiao:"Costas", reps:"10–12"}
+      ]},
+      {nome:"Bloco 2", voltas:"3 voltas", exercicios:[
+        {id:"stiff",           nome:"Stiff com halteres",          regiao:"Atrás das coxas + bumbum — quadril vai para trás", reps:"10–12"},
+        {id:"supinoInclinado", nome:"Supino inclinado com halteres", regiao:"Peito",                                          reps:"10–12"}
+      ]},
+      {nome:"Bloco 3", voltas:"3 voltas", exercicios:[
+        {id:"crucifixoInverso", nome:"Crucifixo inverso", regiao:"Parte de trás dos ombros — inclinada, abre os braços", reps:"12–15"},
+        {id:"martelo",          nome:"Rosca martelo",     regiao:"Frente do braço + antebraço",                          reps:"10–12"}
+      ]}
+    ],
+    abdomen: {nome:"Abdômen B", voltas:"3 voltas, pouco descanso", exercicios:[
+      {id:"rollout",  nome:"Rollout de joelhos", regiao:"Barriga — roda abdominal",                              reps:"8–10"},
+      {id:"abdInfra", nome:"Abdominal infra",    regiao:"Barriga (parte baixa) — puxa os joelhos ao peito",      reps:"12–15"},
+      {id:"pallof",   nome:"Pallof press",       regiao:"Cintura — de lado para a polia, segura sem girar",      reps:"10 cada lado"}
+    ]},
+    final: {id:"finalB", nome:"Final B", padrao:"3 rodadas", descricao:"3 voltas de 10 agachamentos sem peso, 30s de escalador e 30s de descanso."}
+  }
 };
 
 let sessoes = [];
 let atual = "A";
 let rascunho = {};
+let natacao = null;
 
 /* ---------- armazenamento ---------- */
 async function carregar(){
@@ -260,12 +339,39 @@ function proximoTreino(){
   if(!sessoes.length) return "A";
   return sessoes[sessoes.length-1].treino === "A" ? "B" : "A";
 }
+function exerciciosDe(t){
+  const tr = TREINOS[t];
+  const normais = [];
+  tr.blocos.forEach(b=>b.exercicios.forEach(ex=>normais.push({...ex, bloco:b.nome, voltas:b.voltas})));
+  tr.abdomen.exercicios.forEach(ex=>normais.push({...ex, bloco:tr.abdomen.nome, voltas:tr.abdomen.voltas}));
+  return normais;
+}
+function todosExercicios(){
+  return [...exerciciosDe("A").map(e=>({...e,t:"A"})), ...exerciciosDe("B").map(e=>({...e,t:"B"}))];
+}
+function maxVoltas(voltasStr){
+  const nums = (voltasStr.match(/\d+/g)||["3"]).map(Number);
+  return Math.max(...nums);
+}
 function ultimaDe(exId){
   for(let i=sessoes.length-1;i>=0;i--){
-    const e = sessoes[i].exercicios.find(x=>x.id===exId && x.series.some(s=>s.kg!==""));
+    const e = sessoes[i].exercicios.find(x=>x.id===exId && x.series && x.series.some(s=>s.kg!==""||s.reps!==""));
     if(e) return {data:sessoes[i].data, ex:e};
   }
   return null;
+}
+function ultimaFinal(finalId){
+  for(let i=sessoes.length-1;i>=0;i--){
+    const e = sessoes[i].exercicios.find(x=>x.id===finalId && x.tipo==="final" && x.registro);
+    if(e) return {data:sessoes[i].data, ex:e};
+  }
+  return null;
+}
+function formatSerie(s){
+  if(s.kg!=="" && s.reps!=="") return `${s.kg}kg×${s.reps}`;
+  if(s.kg!=="") return `${s.kg}kg`;
+  if(s.reps!=="") return `${s.reps}`;
+  return "";
 }
 function dataBR(iso){
   const [a,m,d] = iso.split("-");
@@ -274,6 +380,9 @@ function dataBR(iso){
 function diasDesde(iso){
   const ms = new Date().setHours(0,0,0,0) - new Date(iso+"T00:00:00").getTime();
   return Math.round(ms/86400000);
+}
+function escaparAttr(t){
+  return String(t==null?"":t).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
 
 /* ---------- cabeçalho ---------- */
@@ -296,7 +405,80 @@ function desenharCabecalho(){
 }
 
 /* ---------- aba treino ---------- */
-function escolher(t){ atual = t; rascunho = {}; desenharTreino(); }
+function escolher(t){ atual = t; rascunho = {}; natacao = null; desenharTreino(); }
+
+function rpeHtml(id, atualRpe){
+  let html = `<div class="rpe"><p>Percepção de esforço</p><div class="chips">`;
+  for(let n=1;n<=10;n++){
+    const on = atualRpe===n ? " on"+(n>=9?" alto":"") : "";
+    html += `<button class="chip${on}" onclick="setRpe('${id}',${n})" aria-label="RPE ${n}">${n}</button>`;
+  }
+  html += `</div></div>`;
+  return html;
+}
+
+function renderExercicio(ex){
+  const n = maxVoltas(ex.voltas);
+  if(!rascunho[ex.id]) rascunho[ex.id] = {series:Array.from({length:n},()=>({kg:"",reps:""})), rpe:null};
+  const d = rascunho[ex.id];
+  const ant = ultimaDe(ex.id);
+
+  const c = document.createElement("div");
+  c.className = "ex";
+  let html = `<h3>${ex.nome}</h3><p class="regiao">${ex.regiao}</p><p class="meta">${ex.voltas} · ${ex.reps}</p>`;
+  if(ant){
+    const res = ant.ex.series.filter(s=>s.kg!==""||s.reps!=="").map(formatSerie).join("  ");
+    html += `<p class="ultima">${dataBR(ant.data)} → ${res}${ant.ex.rpe?`  ·  RPE ${ant.ex.rpe}`:""}</p>`;
+  }
+  d.series.forEach((s,i)=>{
+    html += `<div class="serie"><span>${i+1}ª</span>
+      <input type="number" inputmode="decimal" step="0.5" placeholder="kg" value="${escaparAttr(s.kg)}" oninput="campo('${ex.id}',${i},'kg',this.value)">
+      <input type="text" inputmode="numeric" placeholder="reps" value="${escaparAttr(s.reps)}" oninput="campo('${ex.id}',${i},'reps',this.value)">
+    </div>`;
+  });
+  html += rpeHtml(ex.id, d.rpe);
+  c.innerHTML = html;
+  return c;
+}
+
+function dicaNatacao(){
+  if(natacao==="hoje") return "Nadou no mesmo dia: nade primeiro, faça o treino de força e pule o Final.";
+  if(natacao==="alta") return "Nadou 2 ou mais vezes na semana: treino normal, com os Finais no tempo padrão.";
+  if(natacao==="baixa") return "Nadou 1 vez ou nenhuma: estenda o Final para 10–12 min. Se der, acrescente 1–2 cardios de 20–30 min.";
+  return "Selecione uma opção para ver a orientação de condicionamento da semana.";
+}
+
+function renderNatacao(){
+  const c = document.createElement("div");
+  const op = (v,label)=>`<button class="${natacao===v?"on":""}" onclick="setNatacao('${v}')">${label}</button>`;
+  c.innerHTML = `
+    <p class="bloco"><span>Natação</span><span></span></p>
+    <div class="nata">
+      ${op("hoje","Nadei hoje")}
+      ${op("alta","2+ x na semana")}
+      ${op("baixa","1x ou nenhuma")}
+    </div>
+    <p class="dica">${dicaNatacao()}</p>`;
+  return c;
+}
+function setNatacao(v){ natacao = natacao===v ? null : v; desenharTreino(); }
+
+function renderFinal(final){
+  if(!rascunho[final.id]) rascunho[final.id] = {registro:"", rpe:null};
+  const d = rascunho[final.id];
+  const ant = ultimaFinal(final.id);
+  const pulado = natacao === "hoje";
+
+  const c = document.createElement("div");
+  c.className = "ex final";
+  let html = `<h3>${final.nome}</h3><p class="meta">padrão: ${final.padrao}</p><p class="regiao">${final.descricao}</p>`;
+  if(ant) html += `<p class="ultima">${dataBR(ant.data)} → ${escaparAttr(ant.ex.registro)}${ant.ex.rpe?`  ·  RPE ${ant.ex.rpe}`:""}</p>`;
+  if(pulado) html += `<p class="dica">Pela natação de hoje, o Final é opcional — pode pular sem culpa.</p>`;
+  html += `<div class="serie"><span>·</span><input type="text" placeholder="ex.: 6 min completos / 3 rodadas" value="${escaparAttr(d.registro)}" oninput="campoFinal('${final.id}',this.value)"></div>`;
+  html += rpeHtml(final.id, d.rpe);
+  c.innerHTML = html;
+  return c;
+}
 
 function desenharTreino(){
   document.getElementById("btnA").className = atual==="A" ? "on" : "";
@@ -311,51 +493,51 @@ function desenharTreino(){
     alvo.appendChild(a);
   }
 
-  TREINOS[atual].forEach(ex=>{
-    if(!rascunho[ex.id]) rascunho[ex.id] = {series:Array.from({length:ex.series},()=>({kg:"",reps:""})), rpe:null};
-    const d = rascunho[ex.id];
-    const ant = ultimaDe(ex.id);
+  const tr = TREINOS[atual];
 
-    const c = document.createElement("div");
-    c.className = "ex";
-    let html = `<h3>${ex.nome}</h3><p class="regiao">${ex.regiao}</p><p class="meta">${ex.series} séries · ${ex.reps} · ${ex.descanso==="superssérie"?"emenda no próximo, sem descanso":"descanso "+ex.descanso}</p>`;
-    if(ant){
-      const res = ant.ex.series.filter(s=>s.kg!=="").map(s=>`${s.kg}kg×${s.reps||"–"}`).join("  ");
-      html += `<p class="ultima">${dataBR(ant.data)} → ${res}${ant.ex.rpe?`  ·  RPE ${ant.ex.rpe}`:""}</p>`;
-    }
-    d.series.forEach((s,i)=>{
-      html += `<div class="serie"><span>${i+1}ª</span>
-        <input type="number" inputmode="decimal" step="0.5" placeholder="kg" value="${s.kg}" oninput="campo('${ex.id}',${i},'kg',this.value)">
-        <input type="number" inputmode="numeric" placeholder="reps" value="${s.reps}" oninput="campo('${ex.id}',${i},'reps',this.value)">
-      </div>`;
-    });
-    html += `<div class="rpe"><p>Percepção de esforço</p><div class="chips">`;
-    for(let n=1;n<=10;n++){
-      const on = d.rpe===n ? " on"+(n>=9?" alto":"") : "";
-      html += `<button class="chip${on}" onclick="setRpe('${ex.id}',${n})" aria-label="RPE ${n}">${n}</button>`;
-    }
-    html += `</div></div>`;
-    c.innerHTML = html;
-    alvo.appendChild(c);
+  tr.blocos.forEach(bloco=>{
+    const h = document.createElement("p");
+    h.className = "bloco";
+    h.innerHTML = `<span>${bloco.nome}</span><span>${bloco.voltas}</span>`;
+    alvo.appendChild(h);
+    bloco.exercicios.forEach(ex=>alvo.appendChild(renderExercicio({...ex, bloco:bloco.nome, voltas:bloco.voltas})));
   });
+
+  const ab = tr.abdomen;
+  const hab = document.createElement("p");
+  hab.className = "bloco";
+  hab.innerHTML = `<span>${ab.nome}</span><span>${ab.voltas}</span>`;
+  alvo.appendChild(hab);
+  ab.exercicios.forEach(ex=>alvo.appendChild(renderExercicio({...ex, bloco:ab.nome, voltas:ab.voltas})));
+
+  alvo.appendChild(renderNatacao());
+  alvo.appendChild(renderFinal(tr.final));
 }
 function campo(id,i,k,v){ rascunho[id].series[i][k] = v; }
+function campoFinal(id,v){ rascunho[id].registro = v; }
 function setRpe(id,n){ rascunho[id].rpe = rascunho[id].rpe===n ? null : n; desenharTreino(); }
 
 async function salvarSessao(){
-  const exercicios = TREINOS[atual].map(ex=>({
+  const tr = TREINOS[atual];
+  const normais = exerciciosDe(atual).map(ex=>({
     id:ex.id, nome:ex.nome,
     series: rascunho[ex.id].series.map(s=>({kg:s.kg, reps:s.reps})),
     rpe: rascunho[ex.id].rpe
   }));
-  if(!exercicios.some(e=>e.series.some(s=>s.kg!=="" || s.reps!==""))){
-    aviso("Preencha ao menos uma série"); return;
+  const fd = rascunho[tr.final.id] || {registro:"", rpe:null};
+  const finalEntry = {id:tr.final.id, nome:tr.final.nome, tipo:"final", registro:fd.registro.trim(), rpe:fd.rpe};
+  const exercicios = [...normais, finalEntry];
+
+  const temNormal = normais.some(e=>e.series.some(s=>s.kg!==""||s.reps!==""));
+  const temFinal = finalEntry.registro !== "";
+  if(!temNormal && !temFinal){
+    aviso("Preencha ao menos uma série ou o Final"); return;
   }
   const btn = document.getElementById("salvar");
   btn.disabled = true; btn.textContent = "Salvando…";
   sessoes.push({
     data:new Date().toISOString().slice(0,10),
-    treino:atual, exercicios,
+    treino:atual, exercicios, natacao,
     obs:document.getElementById("obsGeral").value.trim()
   });
   const ok = await gravar();
@@ -363,12 +545,16 @@ async function salvarSessao(){
   if(!ok){ sessoes.pop(); aviso("Não deu para salvar. Tente de novo."); return; }
   document.getElementById("obsGeral").value = "";
   rascunho = {};
+  natacao = null;
   atual = proximoTreino();
   desenharTudo();
   aviso("Sessão registrada");
 }
 
 /* ---------- histórico ---------- */
+function natLabel(v){
+  return v==="hoje" ? "nadou hoje" : v==="alta" ? "nadou 2+x" : v==="baixa" ? "nadou pouco" : "";
+}
 function desenharHistorico(){
   const alvo = document.getElementById("aba-historico");
   if(!sessoes.length){
@@ -377,15 +563,21 @@ function desenharHistorico(){
   }
   alvo.innerHTML = sessoes.slice().reverse().map((s,idxRev)=>{
     const idx = sessoes.length-1-idxRev;
-    const linhas = s.exercicios.filter(e=>e.series.some(x=>x.kg!==""||x.reps!==""))
+    const linhas = s.exercicios.filter(e=>(e.series && e.series.some(x=>x.kg!==""||x.reps!=="")) || (e.tipo==="final" && e.registro))
       .map(e=>{
-        const set = e.series.filter(x=>x.kg!==""||x.reps!=="").map(x=>`${x.kg||"–"}×${x.reps||"–"}`).join("  ");
+        if(e.tipo==="final"){
+          return `<div><b>${e.nome}</b> · ${escapar(e.registro)}${e.rpe?` · RPE ${e.rpe}`:""}</div>`;
+        }
+        const set = e.series.filter(x=>x.kg!==""||x.reps!=="").map(formatSerie).join("  ");
         return `<div><b>${e.nome}</b> · ${set}${e.rpe?` · RPE ${e.rpe}`:""}</div>`;
       }).join("");
     return `<div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
         <div><h4>${dataBR(s.data)}</h4><span class="quando">${s.exercicios.filter(e=>e.rpe).length? "RPE médio "+media(s):"sem RPE"}</span></div>
-        <span class="tag${s.treino}">TREINO ${s.treino}</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          ${s.natacao?`<span class="tagNat">${natLabel(s.natacao)}</span>`:""}
+          <span class="tag${s.treino}">TREINO ${s.treino}</span>
+        </div>
       </div>
       <div class="linhas">${linhas}</div>
       ${s.obs?`<p style="font-size:13.5px;color:var(--giz-fraco);margin:9px 0 0">${escapar(s.obs)}</p>`:""}
@@ -419,13 +611,13 @@ function desenharProgresso(){
     alvo.innerHTML = `<div class="vazio"><strong>Sem dados</strong>O progresso aparece depois de duas sessões do mesmo treino.</div>`;
     return;
   }
-  const todos = [...TREINOS.A.map(e=>({...e,t:"A"})), ...TREINOS.B.map(e=>({...e,t:"B"}))];
+  const todos = todosExercicios();
   let html = "";
   todos.forEach(ex=>{
     const pontos = [];
     sessoes.forEach(s=>{
       const e = s.exercicios.find(x=>x.id===ex.id);
-      if(!e) return;
+      if(!e || !e.series) return;
       const pesos = e.series.map(x=>parseFloat(x.kg)).filter(n=>!isNaN(n));
       if(pesos.length) pontos.push({data:s.data, kg:Math.max(...pesos), rpe:e.rpe});
     });
@@ -450,9 +642,6 @@ function desenharProgresso(){
 }
 
 /* ---------- relatório ---------- */
-function todosExercicios(){
-  return [...TREINOS.A.map(e=>({...e,t:"A"})), ...TREINOS.B.map(e=>({...e,t:"B"}))];
-}
 function gerarTexto(){
   if(!sessoes.length) return "Nenhuma sessão registrada.";
   const pri = sessoes[0].data, ult = sessoes[sessoes.length-1].data;
@@ -475,7 +664,7 @@ function gerarTexto(){
     const pts = [];
     sessoes.forEach(s=>{
       const e = s.exercicios.find(x=>x.id===ex.id);
-      if(!e) return;
+      if(!e || !e.series) return;
       const pesos = e.series.map(x=>parseFloat(x.kg)).filter(n=>!isNaN(n));
       const reps  = e.series.map(x=>parseInt(x.reps)).filter(n=>!isNaN(n));
       if(pesos.length) pts.push({kg:Math.max(...pesos), reps:reps.length?Math.max(...reps):null, rpe:e.rpe, data:s.data});
@@ -498,9 +687,14 @@ function gerarTexto(){
 
   t += "\nÚLTIMAS 6 SESSÕES — DETALHE\n" + "-".repeat(42) + "\n";
   sessoes.slice(-6).forEach(s=>{
-    t += `${dataBR(s.data)} · TREINO ${s.treino}\n`;
+    t += `${dataBR(s.data)} · TREINO ${s.treino}${s.natacao?` · ${natLabel(s.natacao)}`:""}\n`;
     s.exercicios.forEach(e=>{
-      const set = e.series.filter(x=>x.kg!==""||x.reps!=="").map(x=>`${x.kg||"–"}x${x.reps||"–"}`).join(" ");
+      if(e.tipo==="final"){
+        if(e.registro) t += `   ${e.nome}: ${e.registro}${e.rpe?` (RPE ${e.rpe})`:""}\n`;
+        return;
+      }
+      if(!e.series) return;
+      const set = e.series.filter(x=>x.kg!==""||x.reps!=="").map(formatSerie).join(" ");
       if(set) t += `   ${e.nome}: ${set}${e.rpe?` (RPE ${e.rpe})`:""}\n`;
     });
   });
